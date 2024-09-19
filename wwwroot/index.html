@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BlazorAppSample</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/app.css" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link href="BlazorAppSample.styles.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div id="app">
+        <svg class="loading-progress">
+            <circle r="40%" cx="50%" cy="50%" />
+            <circle r="40%" cx="50%" cy="50%" />
+        </svg>
+        <div class="loading-progress-text"></div>
+    </div>
+
+    <div id="blazor-error-ui">
+        An unhandled error has occurred.
+        <a href="" class="reload">Reload</a>
+        <a class="dismiss">🗙</a>
+    </div>
+    <script src="_framework/blazor.webassembly.js"></script>
+    <script>
+        function showLoader() {
+            // Show a loader (you can replace with any loader element you have)
+            let loaderDiv = document.createElement("div");
+            loaderDiv.id = "loader";
+            loaderDiv.style.position = "fixed";
+            loaderDiv.style.top = "50%";
+            loaderDiv.style.left = "50%";
+            loaderDiv.style.transform = "translate(-50%, -50%)";
+            loaderDiv.style.border = "16px solid #f3f3f3";
+            loaderDiv.style.borderTop = "16px solid #3498db";
+            loaderDiv.style.borderRadius = "50%";
+            loaderDiv.style.width = "120px";
+            loaderDiv.style.height = "120px";
+            loaderDiv.style.animation = "spin 2s linear infinite";
+            document.body.appendChild(loaderDiv);
+
+            // Hide the loader after 10 seconds
+            setTimeout(function () {
+                document.body.removeChild(loaderDiv);
+                // Call the C# method when done
+                DotNet.invokeMethodAsync('BlazorAppSample', 'OnLoadingComplete')  // Ensure 'BlazorAppSample' matches your app namespace
+                    .then(data => console.log('Callback received'))
+                    .catch(err => conso).error('Error invoking C# method ;',err);
+            }, 10000);
+        }
+    </script>
+
+
+</body>
+
+</html>

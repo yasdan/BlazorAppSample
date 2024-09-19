@@ -1,0 +1,87 @@
+﻿@page "/adminlist"
+@using BlazorAppSample.DataModel;
+@using BlazorAppSample.Shared
+
+<Delete @ref="delete" Title="Confirm Delete"
+                    Description="Are you sure you want to delete this admin?"
+                    OnDelete="ConfirmDelete" />
+
+<PageTitle>AdminList</PageTitle>
+
+<h1>Admin list</h1>
+
+
+@if (admins == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Admin Name</th>
+                <th>Admin Last name</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var admin in admins)
+            {
+                <tr>
+                    <td>@admin.Name</td>
+                    <td>@admin.Username</td>
+                    <td>
+                        <button type="button" class="btn btn-success">
+                            <i class="fas fa-sync-alt"></i>
+                            Update
+                        </button>
+                    </td>
+                    <td>
+                        <button type="button"class="btn btn-trash" @onclick="() => PromptDelete(admin.Id)">
+                            <i class="far fa-trash-alt"></i> <!-- Delete Icon -->
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                            </svg>
+                        </button>
+                    </td>
+                   
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+    
+    private List<User>? admins;
+
+    AdminService Adminservice = new AdminService();
+    private Delete? delete;
+    private int adminToDeleteId;
+    
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+        admins = await Adminservice.GetAdminsAsync();
+    }
+
+    private void PromptDelete(int adminId)
+    {
+        adminToDeleteId = adminId;
+        delete?.Show();
+    }
+
+    private void ConfirmDelete()
+    {
+        var adminToDelete = admins?.FirstOrDefault(a => a.Id == adminToDeleteId);
+        if (adminToDelete != null)
+        {
+            admins?.Remove(adminToDelete);
+        }
+    }
+}
